@@ -1,0 +1,11 @@
+# nixpacks.toml
+[start]
+cmd = "gussbot"
+
+[phases.setup]
+# Tell Nixpacks which Python we want - it's already in .python-version,
+# but an env var is clearer when reading Coolify UI.
+nixPkgs = []
+
+[variables]
+NIXPACKS_PYTHON_VERSION = "3.13"
