@@ -277,6 +277,34 @@ def main():
             parse_mode=ParseMode.HTML
         )
 
+    # Insert the hourly_check function for periodic apartment notifications
+    async def hourly_check(context: ContextTypes.DEFAULT_TYPE):
+        # Load settings and ensure a chat is subscribed
+        settings = Settings.load()
+        if not settings.chat_id:
+            return
+        # Fetch current apartments
+        new_apartments = await get_apartments()
+        # Filter current and previous apartments based on saved filter
+        filtered_current = filter_apartments(new_apartments, settings.apartment_filter)
+        previous_apartments = settings.apartments
+        filtered_previous = filter_apartments(previous_apartments, settings.apartment_filter)
+        # Determine new apartments not seen before
+        previous_ids = {a.apartment_id for a in filtered_previous}
+
+        # Only notify when there are new apartments matching filters
+        new_matches = [apt for apt in filtered_current if apt.apartment_id not in previous_ids]
+        if new_matches:
+            await context.bot.send_message(
+                chat_id=settings.chat_id,
+                text=f"📢 <b>Found {len(new_matches)} new apartments matching your filters!</b>",
+                parse_mode=ParseMode.HTML
+            )
+            for apt in new_matches:
+                await send_apartment(context.bot, settings.chat_id, apt)
+        # Update saved apartments
+        settings.apartments = new_apartments
+        settings.save()
 
     application.add_handler(CommandHandler("subscribe", subscribe))
     application.add_handler(CommandHandler("filter", set_filter))
@@ -284,4 +312,9 @@ def main():
     application.add_handler(CommandHandler("check", check))
     application.add_handler(CommandHandler("resetapartments", reset_apartments))
     application.add_handler(CommandHandler("help", help_command))
+
+    # Schedule hourly apartment check for new apartments
+    job_queue = application.job_queue
+    if job_queue is not None:
+        job_queue.run_repeating(hourly_check, interval=30, first=0)
     application.run_polling()
