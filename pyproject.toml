@@ -1,0 +1,25 @@
+[project]
+name = "guss-monitoring-bot"
+version = "0.1.0"
+description = "Small telegram bot that checks the guss website for available flats"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "pydantic>=2.11.7",
+    "python-telegram-bot>=22.2",
+]
+
+[project.scripts]
+gussbot = "gussbot.main:main"
+
+[tool.hatch.build.targets.sdist]
+include = ["gussbot", "standalone"]
+
+[tool.hatch.build.targets.wheel]
+include = ["gussbot", "standalone"]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
