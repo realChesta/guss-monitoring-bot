@@ -316,5 +316,5 @@ def main():
     # Schedule hourly apartment check for new apartments
     job_queue = application.job_queue
     if job_queue is not None:
-        job_queue.run_repeating(hourly_check, interval=30, first=0)
+        job_queue.run_repeating(hourly_check, interval=3600, first=0)
     application.run_polling()

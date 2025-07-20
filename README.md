@@ -20,13 +20,13 @@ Small Telegram bot that checks the guss.ch website for available apartments and 
 ```bash
 git clone https://github.com/<your-username>/guss-monitoring-bot.git
 cd guss-monitoring-bot
-pip install .
+uv sync --system
 ```
 
-Or using Hatch:
+Or using Hatch (requires Hatch ≥1.9 and the built-in `uv` environment plugin):
 
 ```bash
-hatch run pip install .
+hatch run uv sync --system
 ```
 
 ## Configuration
@@ -82,9 +82,9 @@ In your Telegram chat:
 1. Create virtual environment:
 
 ```bash
-python3 -m venv venv
+uv venv venv
 source venv/bin/activate
-pip install -e .
+uv sync
 ```
 
 2. Run the bot for development:
